@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+    <property name="LOGS" value="./logs"/>
+
+    <appender name="Console" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <Pattern>
+                %yellow(%d{ISO8601, Asia/Dhaka}) ${hostName} [%blue(%thread)] %highlight(%-5level) %yellow(%logger{16}) - line = %green(%line): %msg%n%throwable
+            </Pattern>
+        </encoder>
+    </appender>
+
+    <appender name="RollingFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>../${LOGS}/SocialMedia.log</file>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <charset>UTF-8</charset>
+            <Pattern>%d{ISO8601, Asia/Dhaka} ${hostName} %thread %-5level %logger{10} - line %line: %msg%n%throwable</Pattern>
+        </encoder>
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <!-- rollover daily and when the file reaches 5 MegaBytes -->
+            <fileNamePattern>../${LOGS}/archived/SocialMediaLog-%d{yyyy-MM-dd, Asia/Dhaka}.%i.log</fileNamePattern>
+            <maxFileSize>100MB</maxFileSize>
+            <maxHistory>366</maxHistory>
+            <totalSizeCap>20GB</totalSizeCap>
+        </rollingPolicy>
+    </appender>
+
+    <!-- Log at INFO level during development -->
+    <springProfile name="dev">
+        <root level="info">
+            <appender-ref ref="RollingFile"/>
+            <appender-ref ref="Console"/>
+        </root>
+        <logger name="com.jpt21.socialmedia" level="debug" additivity="false">
+            <appender-ref ref="RollingFile"/>
+        </logger>
+    </springProfile>
+
+    <!-- Log at ERROR level during production/deployment build -->
+    <springProfile name="production">
+        <root level="error">
+            <appender-ref ref="RollingFile"/>
+            <appender-ref ref="Console"/>
+        </root>
+        <logger name="com.jpt21.socialmedia" level="debug" additivity="false">
+            <appender-ref ref="RollingFile"/>
+        </logger>
+    </springProfile>
+
+</configuration>
