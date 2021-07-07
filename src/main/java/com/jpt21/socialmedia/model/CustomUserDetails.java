@@ -1,5 +1,6 @@
 package com.jpt21.socialmedia.model;
 
+import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -9,6 +10,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@NoArgsConstructor
 public class CustomUserDetails implements UserDetails {
 
     private String firstName;
@@ -18,8 +20,6 @@ public class CustomUserDetails implements UserDetails {
     private String password;
     private Boolean isActive;
     private List<GrantedAuthority> roles;
-
-    public CustomUserDetails(){}
 
     public CustomUserDetails(UserAccount user){
         this.firstName = user.getFirstName();

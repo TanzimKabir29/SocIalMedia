@@ -1,11 +1,9 @@
 package com.jpt21.socialmedia.service;
 
-import com.jpt21.socialmedia.model.CustomUserDetails;
 import com.jpt21.socialmedia.model.UserAccount;
-import com.jpt21.socialmedia.repository.UserRepository;
-import javassist.Loader;
+import com.jpt21.socialmedia.repository.UserAccountRepository;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -17,10 +15,12 @@ import java.util.Optional;
 
 @Service
 @Slf4j
+@AllArgsConstructor
 public class CustomUserDetailsService implements UserDetailsService {
 
-    @Autowired
-    UserRepository userRepository;
+    private final UserAccountRepository userRepository;
+
+
 
     @Override
     public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {

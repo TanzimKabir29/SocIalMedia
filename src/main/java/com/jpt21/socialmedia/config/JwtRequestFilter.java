@@ -3,6 +3,7 @@ package com.jpt21.socialmedia.config;
 import com.jpt21.socialmedia.service.CustomUserDetailsService;
 import com.jpt21.socialmedia.service.JwtUtilities;
 import io.jsonwebtoken.ExpiredJwtException;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -19,15 +20,11 @@ import java.io.IOException;
 
 @Slf4j
 @Component
+@AllArgsConstructor
 public class JwtRequestFilter extends OncePerRequestFilter {
 
     private final CustomUserDetailsService userDetailsService;
     private final JwtUtilities jwtUtilities;
-
-    public JwtRequestFilter(CustomUserDetailsService userDetailsService, JwtUtilities jwtUtilities) {
-        this.userDetailsService = userDetailsService;
-        this.jwtUtilities = jwtUtilities;
-    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, FilterChain filterChain) throws ServletException, IOException {

@@ -5,6 +5,7 @@ import com.jpt21.socialmedia.model.auth.AuthRequest;
 import com.jpt21.socialmedia.model.auth.AuthResponse;
 import com.jpt21.socialmedia.service.CustomUserDetailsService;
 import com.jpt21.socialmedia.service.JwtUtilities;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -14,23 +15,20 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.concurrent.Callable;
 
 @RestController
 @Slf4j
+@AllArgsConstructor
+@RequestMapping("/api")
 public class AuthController {
 
     private final AuthenticationManager authenticationManager;
     private final CustomUserDetailsService customUserDetailsService;
     private final JwtUtilities jwtUtilities;
-
-    public AuthController(AuthenticationManager authenticationManager, CustomUserDetailsService customUserDetailsService, JwtUtilities jwtUtilities) {
-        this.authenticationManager = authenticationManager;
-        this.customUserDetailsService = customUserDetailsService;
-        this.jwtUtilities = jwtUtilities;
-    }
 
     @PostMapping(value = "/authenticate")
     public Callable<ResponseEntity<?>> createAuthenticationToken(@RequestBody AuthRequest authRequest) throws Exception {
@@ -47,10 +45,10 @@ public class AuthController {
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
         } catch (DisabledException de) {
-            throw new Exception("USER_DISABLED", de);
+            throw new Exception("USER_DISABLED");
         } catch (BadCredentialsException bce) {
 //            CompletableFuture.runAsync(() -> authService.updateWrongPin(username));
-            throw new Exception("INVALID_CREDENTIALS", bce);
+            throw new Exception("INVALID_CREDENTIALS");
         }
     }
 }
