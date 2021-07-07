@@ -12,9 +12,9 @@ public class MiscConfig {
 
     @Autowired
     Environment environment;
-
-    @Bean
-    public String jwtSecret() {
-        return environment.getProperty("spring.jwt.secret");
-    }
+//
+//    @Bean
+//    public String jwtSecret() {
+//        return environment.getProperty("spring.jwt.secret");
+//    }
 }

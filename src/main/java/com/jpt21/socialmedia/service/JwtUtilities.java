@@ -22,8 +22,7 @@ import java.util.function.Function;
 @Slf4j
 public class JwtUtilities {
 
-    @Qualifier(value = "jwtSecret")
-    private String SECRET;
+    private final String SECRET = "79ai63c1d4A9s5eq6S4q7w9k5";
     private final long JWT_TOKEN_VALIDITY = 5 * 60 * 60 * 1000;
     private static ConcurrentMap<String, String> userNameTokenMap = new ConcurrentHashMap<>();
 
@@ -49,17 +48,12 @@ public class JwtUtilities {
         }
     }
 
-    public boolean isFirstTimeLogin(String token){
-        return getAllClaimsFromToken(token).get("isFirstTimeLogin",Boolean.class);
-    }
-
     private Boolean isTokenExpired(String token) {
         return getExpirationDateFromToken(token).before(new Date());
     }
 
-    public String generateToken(CustomUserDetails userDetails) {
+    public String generateToken(UserDetails userDetails) {
         Map<String, Object> claims = new HashMap<>();
-        claims.put("isFirstTimeLogin", userDetails.getAuthorities().stream().filter(a->a.toString().equals("FIRST_TIME_LOGIN_APP")).count()==1);
         return createClaimsToken(claims, userDetails.getUsername());
     }
 
@@ -77,7 +71,7 @@ public class JwtUtilities {
     //validate token
     public Boolean validateToken(String token, UserDetails userDetails) {
         final String username = getUsernameFromToken(token);
-        if(token.equals(userNameTokenMap.get(username))) {
+        if (token.equals(userNameTokenMap.get(username))) {
             return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
         } else {
             return false;
@@ -87,7 +81,7 @@ public class JwtUtilities {
     //remove token from memory
     public boolean removeToken(String token) {
         final String username = getUsernameFromToken(token);
-        if(token.equals(userNameTokenMap.get(username))) {
+        if (token.equals(userNameTokenMap.get(username))) {
             return userNameTokenMap.remove(username) != null;
         } else {
             return false;

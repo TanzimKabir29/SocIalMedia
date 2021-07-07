@@ -11,9 +11,12 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.concurrent.Callable;
 
 @RestController
 @Slf4j
@@ -23,29 +26,31 @@ public class AuthController {
     private final CustomUserDetailsService customUserDetailsService;
     private final JwtUtilities jwtUtilities;
 
-    public AuthController(AuthenticationManager authenticationManager, CustomUserDetailsService customUserDetailsService, JwtUtilities jwtUtilities){
+    public AuthController(AuthenticationManager authenticationManager, CustomUserDetailsService customUserDetailsService, JwtUtilities jwtUtilities) {
         this.authenticationManager = authenticationManager;
         this.customUserDetailsService = customUserDetailsService;
         this.jwtUtilities = jwtUtilities;
     }
 
     @PostMapping(value = "/authenticate")
-    public ResponseEntity<?> createAuthenticationToken(@RequestBody AuthRequest authRequest) throws Exception {
-        log.info("Received login request from {}", authRequest.getUsername());
-        authenticate(authRequest.getUsername(),authRequest.getPassword());
-        final CustomUserDetails customUserDetails = customUserDetailsService.loadUserByUsername(authRequest.getUsername());
-        final String jwt = jwtUtilities.generateToken(customUserDetails);
-        return ResponseEntity.ok(new AuthResponse(jwt));
+    public Callable<ResponseEntity<?>> createAuthenticationToken(@RequestBody AuthRequest authRequest) throws Exception {
+        return () -> {
+            log.info("Received login request from {}", authRequest.getUsername());
+            authenticate(authRequest.getUsername(), authRequest.getPassword());
+            final UserDetails userDetails = customUserDetailsService.loadUserByUsername(authRequest.getUsername());
+            final String jwt = jwtUtilities.generateToken(userDetails);
+            return ResponseEntity.ok(new AuthResponse(jwt));
+        };
     }
 
     private void authenticate(String username, String password) throws Exception {
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
-        } catch (DisabledException e) {
-            throw new Exception("USER_DISABLED", e);
-        } catch (BadCredentialsException e) {
+        } catch (DisabledException de) {
+            throw new Exception("USER_DISABLED", de);
+        } catch (BadCredentialsException bce) {
 //            CompletableFuture.runAsync(() -> authService.updateWrongPin(username));
-            throw new Exception("INVALID_CREDENTIALS", e);
+            throw new Exception("INVALID_CREDENTIALS", bce);
         }
     }
 }
