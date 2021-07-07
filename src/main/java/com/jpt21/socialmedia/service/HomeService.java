@@ -29,17 +29,21 @@ public class HomeService {
         if(statusRepository.save(status) ==null){
             return false;
         }
+        log.info("Status saved for user: {}", status.getPosterName());
         return true;
     }
 
     public String registerUser(UserAccount userAccount) {
         log.info("Received request to register user {}", userAccount);
+        //Check if a user with same username already exists
         if(userAccountRepository.findByUserName(userAccount.getUserName()).isPresent()){
             return "Username exists already";
         }
+        //Check if a user with same email already exists
         if(userAccountRepository.findByEmail(userAccount.getEmail()).isPresent()){
             return "Email exists already";
         }
+        //Hardcode isActive and Role because we aren't using them explicitly
         userAccount.setIsActive(true);
         userAccount.setRoles("ROLE_USER");
         if(userAccountRepository.save(userAccount) == null){

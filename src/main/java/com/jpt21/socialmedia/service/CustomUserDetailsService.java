@@ -20,8 +20,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     private final UserAccountRepository userRepository;
 
-
-
+    //Modified to load user by username, and if it fails, by email. User can use any one to login
     @Override
     public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
         Optional<UserAccount> userByUserName = userRepository.findByUserName(userName);

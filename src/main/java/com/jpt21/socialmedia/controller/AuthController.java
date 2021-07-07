@@ -30,6 +30,7 @@ public class AuthController {
     private final CustomUserDetailsService customUserDetailsService;
     private final JwtUtilities jwtUtilities;
 
+    //endpoint to return a JWT token after authentication
     @PostMapping(value = "/authenticate")
     public Callable<ResponseEntity<?>> createAuthenticationToken(@RequestBody AuthRequest authRequest) throws Exception {
         return () -> {

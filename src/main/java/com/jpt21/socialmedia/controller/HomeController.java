@@ -15,6 +15,11 @@ public class HomeController {
 
     private final HomeService homeService;
 
+    @GetMapping("/")
+    public String getBlankPage(){
+        return "redirect:/login";
+    }
+
     @GetMapping("/login")
     public String getLoginPage(){
         return "login";
